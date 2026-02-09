@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Workspace - SkillSathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/dashboard-modern.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        /* Specific Fixes for Worker Dashboard Icons/Colors */
+        .sidebar { background-color: var(--brand-blue); border-right: none; }
+        
+        .sidebar-header .logo-icon {
+    /* REMOVE ALL STYLES FOR THIS CLASS */ 
+    width: 40px; 
+    height: 40px; 
+    background: url('assets/logo.png') no-repeat center center;
+    background-size: contain; 
+    color: var(--brand-blue)
+}
+        
+        .sidebar-header .logo-text { color: white; }
+        .sidebar-link { color: #EBF3FF; }
+        .sidebar-link:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        .sidebar-link.active { background-color: white; color: var(--brand-blue); font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .sidebar-footer .logout { color: #FEE2E2; }
+        .sidebar-footer .logout:hover { background: #E44D4D; color: white; }
+
+        .dashboard-header h1 { color: var(--brand-blue); }
+        .header-left p { color: var(--text-dark); }
+        
+        /* Stats Icon colors to match the theme */
+        .stat-icon.icon-certs { background: var(--accent-light); color: var(--brand-green); }
+        .stat-icon.icon-pending { background: var(--warning-light); color: var(--warning); }
+        .stat-icon { background: var(--primary-light); color: var(--brand-blue); }
+        
+        /* Custom File Input Styling for Bulk Import */
+        .bulk-upload-box {
+            border: 2px dashed #E5E7EB;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #F9FAFB;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .bulk-upload-box:hover { border-color: var(--brand-green); background: #ECFDF5; }
+        .bulk-upload-text { font-size: 1rem; color: var(--text-dark); font-weight: 600; margin-top: 10px; }
+        .bulk-upload-input { display: none; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i data-feather="user"></i></div>
+            <span class="logo-text">Staff Portal</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="worker_dashboard.html" class="sidebar-link active"><i data-feather="home"></i> My Workspace</a>
+            <a href="#" id="navIssueBtn" class="sidebar-link"><i data-feather="file-plus"></i> Issue Single Cert</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="#" id="logoutButton" class="sidebar-link logout"><i data-feather="log-out"></i> Logout</a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <p>Logged in as: <strong id="activeIssuerName">Loading...</strong></p>
+                <h1>My Workspace</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userInitial">S</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- STATS ROW -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon icon-certs"><i data-feather="check-circle"></i></div>
+                <div class="stat-info">
+                    <p>My Issued Certs</p>
+                    <span class="stat-value" id="myTotalIssued">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-pending"><i data-feather="clock"></i></div>
+                <div class="stat-info">
+                    <p>Pending Approval</p>
+                    <span class="stat-value" id="myTotalPending">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN GRID (Bulk Import + Pending List) -->
+        <div class="dashboard-grid">
+            
+            <!-- LEFT: BULK IMPORT TOOL -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="color:var(--text-dark);"><i data-feather="upload-cloud" style="width:20px; color:#F59E0B; margin-right:5px;"></i> Bulk Import Certificates</h3>
+                </div>
+                
+                <form id="bulkImportForm">
+                    <div class="bulk-upload-box" onclick="document.getElementById('csvFile').click()">
+                        <i data-feather="file-text" style="width:30px; height:30px; color:var(--brand-blue);"></i>
+                        <span class="bulk-upload-text" id="fileNameDisplay">Click to Choose File (CSV)</span>
+                        <input type="file" id="csvFile" accept=".csv" class="bulk-upload-input" required onchange="updateBulkFileName(this)">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" style="width:100%; margin-top:20px;">
+                        <i data-feather="upload-cloud"></i> Upload & Create
+                    </button>
+                </form>
+                
+                <div style="margin-top: 10px; text-align: center;">
+                    <a href="#" onclick="downloadTemplate()" style="color: var(--brand-blue); font-size: 0.9rem; text-decoration:none;">Download Sample CSV Template</a>
+                </div>
+            </div>
+
+            <!-- RIGHT: MY PENDING LIST -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Waiting for Approval</h3>
+                    <button class="btn-primary" style="background:#F4F7FE; color:var(--text-gray); border:none;" onclick="loadMyData()">
+                        <i data-feather="refresh-cw" style="color:var(--brand-blue);"></i>
+                    </button>
+                </div>
+                <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Recipient</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myPendingTable">
+                            <tr><td colspan="3">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+     <!-- NEW: WORKER ACTIVITY FEED -->
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-header">
+                <h3>My Recent Activity</h3>
+                <button class="btn-primary" style="background:#F4F7FE; color:var(--text-gray); border:none;" onclick="loadMyActivity()">
+                    <i data-feather="refresh-cw" style="color:var(--brand-blue);"></i>
+                </button>
+            </div>
+            <div class="activity-feed">
+                <ul id="workerActivityFeed">
+                    <li style="color:var(--text-gray); padding:10px;">Loading activity...</li>
+                </ul>
+            </div>
+        </div>
+
+    <!-- ISSUE CERTIFICATE MODAL -->
+    <div id="issueCertModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2>Issue Single Certificate</h2>
+                <button id="closeModalBtn" class="modal-close-btn">&times;</button>
+            </header>
+            <div class="modal-body">
+                <form id="issueCertForm" class="form">
+                    <div class="form-group"><label class="form-label">Recipient's Photo (Optional)</label><input type="file" id="recipientPhoto" class="form-control" accept="image/*"></div>
+                    <div class="form-group"><label class="form-label">Full Name *</label><input type="text" id="recipientName" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Email Address *</label><input type="email" id="recipientEmail" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Course Title *</label><input type="text" id="courseTitle" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Completion Date *</label><input type="date" id="completionDate" class="form-control" required></div>
+                    <div class="modal-footer"><button type="submit" class="btn-primary" style="width:100%">Submit for Approval</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JS Function for Custom File Input
+        function updateBulkFileName(input) {
+            const display = document.getElementById('fileNameDisplay');
+            if (input.files && input.files.length > 0) {
+                display.textContent = input.files[0].name;
+                display.style.color = 'var(--brand-green)';
+            } else {
+                display.textContent = 'Click to Choose File (CSV)';
+                display.style.color = 'var(--text-dark)';
+            }
+        }
+        feather.replace()
+    </script>
+    <script src="js/worker_dashboard.js"></script>
+</body>
+</html>

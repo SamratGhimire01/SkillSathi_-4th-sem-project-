@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome - SkillSathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/auth-sliding.css">
+</head>
+<body>
+
+<div class="container" id="container">
+    
+    <!-- REGISTER FORM -->
+    <div class="form-container sign-up-container">
+        <form id="registerForm" enctype="multipart/form-data">
+            <h1 style="color: #3A86FF;">Create Account</h1>
+            
+            <!-- <div class="social-container">
+                <a href="#" class="fb"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="gl"><i class="fab fa-google"></i></a>
+                <a href="#" class="li"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>use your official email for registration</span> -->
+            
+            <div id="reg-alert" style="color:red; font-size:0.9rem; display:none; margin-top:10px;"></div>
+
+            <div class="section-title">Company Details</div>
+            <input type="text" name="name" placeholder="Company Name" required />
+            <input type="text" name="business_reg_number" placeholder="Business Reg. Number" required />
+            <!-- NEW PHONE NUMBER INPUT -->
+            <input type="tel" name="phone_number" placeholder="Phone Number (e.g. +977...)" required />
+            
+            <div class="section-title">Contact Person</div>
+            <input type="text" name="primary_contact_name" placeholder="Full Name" required />
+            <input type="text" name="citizenship_number" placeholder="Citizenship ID" required />
+
+            <div class="section-title">Documents</div>
+            
+            <div class="file-input-group">
+                <input type="file" id="contact_photo" name="contact_photo" accept="image/*" required onchange="updateFileName(this, 'photo-name')">
+                <label for="contact_photo" class="file-input-label"><i class="fas fa-camera"></i> Upload Contact Photo</label>
+                <span id="photo-name" class="file-name-display">No file chosen</span>
+            </div>
+
+            <div class="file-input-group">
+                <input type="file" id="registration_document" name="registration_document" accept="image/*,application/pdf" required onchange="updateFileName(this, 'doc-name')">
+                <label for="registration_document" class="file-input-label"><i class="fas fa-file-alt"></i> Upload Reg. Document</label>
+                <span id="doc-name" class="file-name-display">No file chosen</span>
+            </div>
+
+            <div class="section-title">Security</div>
+            <input type="email" name="email" placeholder="Official Email" required />
+            
+            <div class="password-container">
+                <input type="password" name="password" id="regPass" placeholder="Password" required />
+                <i class="fas fa-eye toggle-password" onclick="togglePass('regPass', this)"></i>
+            </div>
+
+            <button type="submit" style="background-color: #3A86FF; border-color: #3A86FF;">Sign Up</button>
+        </form>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="form-container sign-in-container">
+        <form id="loginForm">
+            <h1 style="color: #10B981;">Sign in to SkillSathi</h1>
+            
+            <!-- <div class="social-container">
+                <a href="#" class="fb"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="gl"><i class="fab fa-google"></i></a>
+                <a href="#" class="li"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>or use your email account</span> -->
+            
+            <div id="login-alert" style="color:red; font-size:0.9rem; margin-bottom:10px; display:none;"></div>
+
+            <input type="email" name="username" placeholder="Email" required />
+            
+            <div class="password-container">
+                <input type="password" name="password" id="loginPass" placeholder="Password" required />
+                <i class="fas fa-eye toggle-password" onclick="togglePass('loginPass', this)"></i>
+            </div>
+            
+            <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin:10px 0;">
+                <label style="font-size:0.8rem; display:flex; align-items:center; color:#666;">
+                    <input type="checkbox" style="width:auto; margin-right:5px;"> Remember me
+                </label>
+                <a href="forgot_password.html">Forgot password?</a>
+            </div>
+
+            <button type="submit" style="background-color: #10B981; border-color: #10B981;">Sign In</button>
+            
+            <a href="staff_login.html" style="color: #3A86FF; margin-top: 20px; font-weight:600;">Are you a Staff Member? Login here &rarr;</a>
+        </form>
+    </div>
+
+    <!-- OVERLAY -->
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your company info</p>
+                <button class="ghost" id="signIn">Sign In</button>
+                <a href="index.html" style="color:white; margin-top:20px; opacity:0.8;">&larr; Back to Home</a>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Enter your personal details and start your journey with us</p>
+                <button class="ghost" id="signUp">Register Center</button>
+                <a href="index.html" style="color:white; margin-top:20px; opacity:0.8;">&larr; Back to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Toggle Password
+    function togglePass(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = "password";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    // Sliding Logic
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.getElementById('container');
+
+    signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
+    signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
+
+    // File Name Update
+    function updateFileName(input, spanId) {
+        const span = document.getElementById(spanId);
+        if (input.files.length > 0) {
+            span.textContent = input.files[0].name;
+            span.style.color = "#333";
+        } else {
+            span.textContent = "No file chosen";
+        }
+    }
+
+    // API Handling
+    const API_BASE_URL = "http://127.0.0.1:8000";
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        const alertBox = document.getElementById('login-alert');
+        const oldText = btn.innerText;
+        btn.innerText = "Processing..."; btn.disabled = true;
+        
+        const formData = new FormData();
+        formData.append('username', e.target.username.value);
+        formData.append('password', e.target.password.value);
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/auth/login`, { method: 'POST', body: formData });
+            const data = await res.json();
+            if(res.ok) {
+                localStorage.setItem('accessToken', data.access_token);
+                const userRes = await fetch(`${API_BASE_URL}/companies/me`, { headers: {'Authorization': `Bearer ${data.access_token}`} });
+                const user = await userRes.json();
+                window.location.href = user.is_admin ? 'admin_dashboard.html' : 'dashboard.html';
+            } else {
+                throw new Error(data.detail || "Login Failed");
+            }
+        } catch(err) {
+            alertBox.style.display = 'block'; alertBox.innerText = err.message;
+            btn.innerText = oldText; btn.disabled = false;
+        }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        const alertBox = document.getElementById('reg-alert');
+        const oldText = btn.innerText;
+        btn.innerText = "Uploading..."; btn.disabled = true;
+
+        try {
+            const formData = new FormData(e.target);
+            const res = await fetch(`${API_BASE_URL}/auth/register`, { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            if(res.ok) {
+                alert("Application Submitted! Please wait for Admin approval.");
+                container.classList.remove("right-panel-active");
+                e.target.reset();
+                document.querySelectorAll('.file-name-display').forEach(el => el.innerText = "No file chosen");
+            } else {
+                throw new Error(data.detail || "Failed");
+            }
+        } catch(err) {
+            alertBox.style.display = 'block'; alertBox.innerText = err.message;
+        } finally {
+            btn.innerText = oldText; btn.disabled = false;
+        }
+        
+    }
+    
+    
+    );
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('action') === 'register') {
+            const container = document.getElementById('container');
+            container.classList.add("right-panel-active");
+        }
+    });
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Help & Support - SkillSathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/dashboard-modern.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i data-feather="award"></i></div>
+            <span class="logo-text">SkillSathi</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link"><i data-feather="grid"></i> Dashboard</a>
+            <a href="workers.html" class="sidebar-link"><i data-feather="users"></i> Workers</a>
+            <a href="certificates.html" class="sidebar-link"><i data-feather="file-text"></i> Certificates</a>
+            <a href="audit_logs.html" class="sidebar-link"><i data-feather="activity"></i> Audit Log</a>
+            <a href="settings.html" class="sidebar-link"><i data-feather="settings"></i> Settings</a>
+            <!-- NEW LINK -->
+            <a href="help.html" class="sidebar-link active"><i data-feather="help-circle"></i> Help & Support</a>
+        </nav>
+        <div class="sidebar-footer"><a href="#" class="sidebar-link logout" onclick="confirmLogout(event)">
+    <i data-feather="log-out"></i> Logout
+</a></div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <p>Support Center</p>
+                <h1>How can we help?</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userInitial">U</div>
+                    <span style="font-weight:700; font-size:0.9rem;" id="userName">Loading...</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Left: FAQs -->
+            <div class="card">
+                <h3 style="margin-bottom:20px;">Frequently Asked Questions</h3>
+                
+                <div class="faq-item">
+                    <div class="faq-question">How do I issue a certificate? <i data-feather="chevron-down"></i></div>
+                    <div class="faq-answer">Go to the "Certificates" page and click "Issue New". Fill in the student details and click Submit.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Can I bulk upload data? <i data-feather="chevron-down"></i></div>
+                    <div class="faq-answer">Yes! Log in as a Staff member to access the CSV Bulk Import tool in your workspace.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">How do I change my company logo? <i data-feather="chevron-down"></i></div>
+                    <div class="faq-answer">Navigate to Settings > Branding. Upload a PNG image for best results.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Is the data secure? <i data-feather="chevron-down"></i></div>
+                    <div class="faq-answer">Yes, we use industry-standard encryption and secure hashing for all certificates.</div>
+                </div>
+            </div>
+
+            <!-- Right: Contact Form -->
+            <div class="card">
+                <h3 style="margin-bottom:20px;">Contact Support</h3>
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <select class="form-control">
+                            <option>Technical Issue</option>
+                            <option>Billing Question</option>
+                            <option>Feature Request</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" rows="5" placeholder="Describe your issue..."></textarea>
+                    </div>
+                    <button class="btn-primary" style="width:100%;">Send Message</button>
+                </form>
+                
+                <div style="margin-top:20px; padding-top:20px; border-top:1px solid #eee;">
+                    <p style="font-size:0.9rem; color:var(--text-gray); margin-bottom:5px;">Email us directly:</p>
+                    <a href="mailto:skillsathi.info@gmail.com" style="color:var(--brand-blue); font-weight:600;">skillsathi.info@gmail.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        const API_BASE_URL = "http://127.0.0.1:8000";
+        const token = localStorage.getItem('accessToken');
+
+        if(!token) window.location.href='login.html';
+
+        // --- SUBMIT TICKET LOGIC ---
+        document.querySelector('button.btn-primary').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const btn = e.target;
+            const subject = document.querySelector('select').value;
+            const message = document.querySelector('textarea').value;
+
+            if(!message) return alert("Please enter a message");
+
+            btn.textContent = "Sending..."; btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/support/submit`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ subject, message })
+                });
+
+                if(res.ok) {
+                    alert("Ticket Sent! Our team will review it.");
+                    document.querySelector('textarea').value = ""; // Clear form
+                } else {
+                    alert("Failed to send.");
+                }
+            } catch(e) { console.error(e); alert("Network Error"); }
+            
+            btn.textContent = "Send Message"; btn.disabled = false;
+        });
+
+        // Header Info
+        fetch(`${API_BASE_URL}/companies/me`, { headers: { 'Authorization': `Bearer ${token}` } })
+            .then(r => r.json())
+            .then(u => {
+                document.getElementById('userName').textContent = u.name;
+                document.getElementById('userInitial').textContent = u.name[0];
+            });
+
+        document.getElementById('logoutButton').onclick = () => { localStorage.clear(); window.location.href='login.html'; };
+        
+        // Accordion
+        document.querySelectorAll('.faq-question').forEach(item => {
+            item.addEventListener('click', () => { item.parentElement.classList.toggle('active'); });
+        });
+    </script>
+</body>
+</html>

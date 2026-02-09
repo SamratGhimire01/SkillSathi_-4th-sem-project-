@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Workers - SkillSathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/dashboard-modern.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i data-feather="award"></i></div>
+            <span class="logo-text">SkillSathi</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link"><i data-feather="grid"></i> Dashboard</a>
+            <a href="workers.html" class="sidebar-link active"><i data-feather="users"></i> Workers</a>
+            <a href="certificates.html" class="sidebar-link"><i data-feather="file-text"></i> Certificates</a>
+            <a href="audit_logs.html" class="sidebar-link"><i data-feather="activity"></i> Audit Log</a>
+            <a href="settings.html" class="sidebar-link"><i data-feather="settings"></i> Settings</a>
+        </nav>
+        <div class="sidebar-footer"><a href="#" id="logoutButton" class="sidebar-link logout"><i data-feather="log-out"></i> Logout</a></div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <p>Team Management</p>
+                <h1>Manage Workers</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userInitial">U</div>
+                    <span style="font-weight:700; font-size:0.9rem;" id="userName">Loading...</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Your Worker List</h3>
+                <div style="display:flex; gap:10px;">
+                    <!-- NEW SEARCH BOX -->
+                    <input type="text" id="workerSearchInput" class="search-box" placeholder="Search by name, ID...">
+                    <button id="addWorkerBtn" class="btn-primary"><i data-feather="plus"></i> Add New</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table" style="width:100%;">
+                    <thead>
+                        <tr style="color:var(--text-gray); font-size:0.85rem;">
+                            <th>Worker ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workersTableBody">
+                        <!-- JS Injects Rows Here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals remain same as previous (Edit/Add/Creds) -->
+    <!-- Add Worker Modal -->
+    <div id="addWorkerModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="modalTitle">Add a New Worker</h2>
+                <button id="closeModalBtn" class="modal-close-btn">&times;</button>
+            </header>
+            <div class="modal-body">
+                <div id="modal-alert-message" class="alert-message" style="display: none;"></div>
+                <form id="addWorkerForm" class="form">
+                    <input type="hidden" id="editWorkerId">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="workerName" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="workerEmail" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Worker ID</label>
+                        <input type="text" id="workerId" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="workerPassword" class="form-control" placeholder="Set password">
+                            <!-- THE EYE ICON -->
+                            <i data-feather="eye" id="toggleWorkerPass" class="toggle-password-icon"></i>
+                        </div>
+                        <small style="font-size:0.8rem; color:#A3AED0;">Leave blank to keep current password when editing.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <select id="workerRole" class="form-control">
+                            <option value="member">Member</option>
+                            <option value="manager">Manager</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn-primary" style="width:100%">Save Worker</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>feather.replace()</script>
+    <script src="js/workers.js"></script>
+</body>
+</html>

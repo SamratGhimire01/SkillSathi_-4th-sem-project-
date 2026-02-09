@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audit Log - SkillSathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/dashboard-modern.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i data-feather="award"></i></div>
+            <span class="logo-text">SkillSathi</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="sidebar-link"><i data-feather="grid"></i> Dashboard</a>
+            <a href="workers.html" class="sidebar-link"><i data-feather="users"></i> Workers</a>
+            <a href="certificates.html" class="sidebar-link"><i data-feather="file-text"></i> Certificates</a>
+            <a href="audit_logs.html" class="sidebar-link active"><i data-feather="activity"></i> Audit Log</a>
+            <a href="settings.html" class="sidebar-link"><i data-feather="settings"></i> Settings</a>
+        </nav>
+        <div class="sidebar-footer"><a href="#" id="logoutButton" class="sidebar-link logout"><i data-feather="log-out"></i> Logout</a></div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <p>System Security</p>
+                <h1>Audit Logs</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userInitial">U</div>
+                    <span style="font-weight:700; font-size:0.9rem;" id="userName">Loading...</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Activity History</h3>
+                <div class="filter-container">
+                    <!-- NEW FILTER DROPDOWN -->
+                    <select id="logFilterSelect" class="filter-select">
+                        <option value="all">All Events</option>
+                        <option value="login">Logins</option>
+                        <option value="issue">Certificates Issued</option>
+                        <option value="delete">Deleted Items</option>
+                        <option value="approve">Approvals</option>
+                        <option value="import">Bulk Imports</option>
+                    </select>
+                    <input type="text" id="logSearchInput" class="search-box" placeholder="Search staff name, details...">
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="data-table" style="width:100%;">
+                    <thead>
+                        <tr style="color:var(--text-gray); font-size:0.85rem;">
+                            <th>Date & Time</th>
+                            <th>Event Type</th>
+                            <th>Actor</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditLogTableBody">
+                        <tr><td colspan="4" style="text-align:center; padding:1rem;">Loading logs...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>feather.replace()</script>
+    <script src="js/audit_logs.js"></script>
+</body>
+</html>

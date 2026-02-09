@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Login - SkillSathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/auth-sliding.css">
+    <style>
+        .overlay { background: var(--primary-grad); }
+        .btn-staff { background-color: #3A86FF; border-color: #3A86FF; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="container">
+    
+    <div class="form-container sign-in-container">
+        <form id="staffLoginForm">
+            <h1 style="color: #3A86FF;">Staff Portal</h1>
+            
+            <div class="social-container">
+                <a href="#" class="fb"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="gl"><i class="fab fa-google"></i></a>
+                <a href="#" class="li"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>access your workspace</span>
+            
+            <div id="alert-message" style="color:red; font-size:0.9rem; margin-bottom:10px; display:none;"></div>
+
+            <input type="text" name="username" placeholder="Worker ID or Email" required />
+            
+            <!-- PASSWORD WITH EYE -->
+            <div class="password-container">
+                <input type="password" name="password" id="staffPass" placeholder="Password" required />
+                <i class="fas fa-eye toggle-password" onclick="togglePass('staffPass', this)"></i>
+            </div>
+            
+            <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin:10px 0;">
+                <label style="font-size:0.8rem; display:flex; align-items:center; color:#666;">
+                    <input type="checkbox" style="width:auto; margin-right:5px;"> Remember me
+                </label>
+                <a href="#">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-staff">Login as Staff</button>
+            
+            <a href="index.html" style="color: #666; margin-top: 20px; font-size: 0.8rem;">&larr; Back to Website</a>
+        </form>
+    </div>
+
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Staff!</h1>
+                <p>Enter your Worker ID and password to issue certificates and manage your profile.</p>
+                <p style="margin: 10px 0 5px;">Not a staff member?</p>
+                <a href="login.html"><button class="ghost">Company Login</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Toggle Password
+    function togglePass(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = "password";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    // 2. Login Logic
+    const API_BASE_URL = "http://127.0.0.1:8000";
+    const form = document.getElementById('staffLoginForm');
+    const alertBox = document.getElementById('alert-message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('button');
+        const oldText = btn.innerText;
+        btn.innerText = "Verifying..."; 
+        btn.disabled = true;
+        alertBox.style.display = 'none';
+
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/worker/login`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail || 'Login failed');
+            }
+
+            localStorage.setItem('accessToken', data.access_token);
+            window.location.href = 'worker_dashboard.html';
+
+        } catch (error) {
+            alertBox.innerText = error.message;
+            alertBox.style.display = 'block';
+            btn.innerText = oldText;
+            btn.disabled = false;
+        }
+    });
+</script>
+
+</body

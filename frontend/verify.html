@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Certificate - SkillSathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        /* Verification Specific Styles (Final Polish) */
+        .verify-wrapper { 
+            padding: 4rem 1rem; 
+            min-height: 100vh; 
+            background-color: #F4F7FE; /* Light Blue-Gray Background */
+        }
+        .verify-card { 
+            background: white; 
+            padding: 2rem 3rem; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); /* Stronger Shadow */
+            max-width: 900px; 
+            width: 100%; 
+            margin: 0 auto; 
+            
+            /* The Final Subtle Brand Border */
+            border-top: 6px solid var(--brand-blue); 
+            transition: box-shadow 0.3s;
+        }
+        .verify-card:hover {
+            box-shadow: 0 20px 40px rgba(58, 134, 255, 0.2); /* Hover Blue Shadow */
+        }
+
+        /* Dynamic Status Header */
+        .status-banner {
+    padding: 1.5rem; 
+    border-radius: 15px; 
+    margin-bottom: 30px; /* More space below banner */
+    font-weight: 700; 
+    font-size: 1.2rem;
+    display: flex; 
+    align-items: center; 
+    gap: 1rem;
+    
+    /* Subtle Shadow for Premium Feel */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
+}
+.status-banner.verified { 
+    background: #ECFDF5; 
+    color: #059669; 
+    border: 1px solid #10B981; 
+}
+        .status-banner.revoked { background: #FEF2F2; color: #DC2626; border: 1px solid #EF4444; }
+        .status-banner.expired { background: #FFFBEB; color: #B45309; border: 1px solid #F59E0B; }
+        .status-banner.not-found { background: #F3F4F6; color: #6B7280; border: 1px solid #A3AED0; }
+
+        /* Certificate Details Layout */
+        .cert-main-details { 
+    text-align: center; 
+    margin-bottom: 30px; /* More space */
+}
+.cert-main-details h1 { 
+    font-size: 3rem; /* Make the course title HUGE */
+    font-weight: 900; /* Extra bold */
+    color: var(--text-dark); 
+    margin-bottom: 0.25rem; 
+    letter-spacing: -1px; /* Tighten kerning */
+}
+.cert-main-details p { 
+    font-size: 1.1rem; 
+    color: var(--text-dark); 
+    margin: 0; 
+    opacity: 0.7; 
+}
+        .cert-sub-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem; text-align: left; }
+        .detail-item label { display: block; font-size: 0.85rem; color: var(--gray-color); margin-bottom: 0.25rem; font-weight: 600; }
+        .detail-item p { font-size: 1rem; font-weight: 700; color: var(--dark-color); margin: 0; }
+
+        /* Security Panel */
+        .security-panel { 
+    margin-top: 40px; 
+    background: #F9FAFB; 
+    padding: 20px 25px; 
+    border-radius: 15px; /* Softer corners */
+    border: 1px solid #E5E7EB; /* Subtle border */
+}
+        .security-panel h4 { font-size: 1rem; color: var(--dark-color); margin-bottom: 10px; display: flex; align-items: center; gap: 10px;}
+        .security-hash { font-family: monospace; font-size: 0.85rem; word-break: break-all; color: var(--text-dark); opacity: 0.8;}
+        
+        .cert-actions { 
+    margin-top: 40px; 
+    display: flex; 
+    justify-content: center; 
+    gap: 15px; 
+}
+.cert-actions .btn {
+    padding: 15px 30px; /* Bigger buttons */
+    border-radius: 12px; /* Softer radius */
+}
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="header">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i data-feather="award"></i></div>
+                <span class="logo-text">SkillSathi</span>
+            </a>
+            <a href="index.html" class="btn btn-outline">Back to Home</a>
+        </div>
+    </header>
+
+    <main class="verify-wrapper">
+    <div id="loadingState" class="verify-card" style="text-align:center;">
+        <p>Loading verification details...</p>
+    </div>
+    
+    <!-- VERIFICATION RESULT CARD -->
+    <div id="resultCard" class="verify-card" style="display: none;">
+        
+        <!-- Dynamic Status Banner (Now Includes Trust Marker) -->
+        <div id="statusBanner" class="status-banner">
+                <!-- Left Side: Verification Status -->
+                <div style="display:flex; align-items:center; gap:1rem;">
+                    <i data-feather="check-circle"></i> 
+                    <span id="statusMessage">Verified Authentic</span>
+                </div>
+                
+                <!-- Right Side: Trust Marker (Pushed to the right) -->
+                <span style="margin-left: auto; font-size: 0.9rem; color:var(--text-dark); opacity:0.6; display:flex; align-items:center; gap:5px;">
+                    <i data-feather="shield" style="width:18px;"></i> Blockchain Secured
+                </span>
+            </div>
+
+        <!-- Company Logo Area -->
+        <div id="companyLogoPlaceholder" style="text-align:center; margin-bottom: 30px;">
+            <!-- Logo will be injected here -->
+        </div>
+
+        <!-- Main Certificate Details -->
+        <div class="cert-main-details">
+            <h1 id="vCourseTitle">Course Title</h1>
+            <p>Issued to <strong id="vRecipientName">Recipient Name</strong></p>
+        </div>
+
+        <div class="cert-sub-details">
+            <div class="detail-item"><label>Certificate ID</label><p id="vCertID">SKSL-...</p></div>
+            <div class="detail-item"><label>Issue Date</label><p id="vIssueDate">Jan 01, 2025</p></div>
+            <div class="detail-item"><label>Status</label><p id="vStatusText" style="text-transform: capitalize;">Active</p></div>
+        </div>
+
+        <!-- Security Audit Panel -->
+        <div class="security-panel">
+            <h4><i data-feather="lock" style="color:var(--brand-blue);"></i> Digital Security Audit</h4>
+            <div class="cert-sub-details" style="margin-top:0; border-top:1px solid #ddd; padding-top:15px;">
+                <div class="detail-item"><label>Verification Count</label><p id="vCount">0</p></div>
+                <div class="detail-item" style="grid-column: span 2;"><label>SHA-256 Hash</label><p id="vHash" class="security-hash"></p></div>
+            </div>
+        </div>
+
+        <div class="cert-actions">
+            <button id="downloadPdfBtn" class="btn btn-primary"><i data-feather="download"></i> Download PDF</button>
+            <button id="shareLinkedInBtn" class="btn btn-outline" style="color:var(--brand-blue); border-color:var(--brand-blue);"><i class="fab fa-linkedin"></i> Share on LinkedIn</button>
+        </div>
+    </div>
+</main>
+
+    <script src="js/verify.js"></script>
+    <script>feather.replace()</script>
+</body>
+</html>

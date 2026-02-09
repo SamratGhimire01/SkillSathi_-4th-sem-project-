@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSathi - Digital Skill Certificates You Can Trust</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="header">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i data-feather="award"></i></div>
+            <span class="logo-text">SkillSathi</span>
+            </a>
+            <nav class="navbar">
+                <a href="#" class="nav-link">Home</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#verification" class="nav-link">Verify</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                
+            </nav>
+            <div class="nav-buttons">
+                <!-- UPDATED: Login is now a button -->
+                <a href="login.html" class="btn btn-primary">Login</a>
+                <a href="login.html?action=register" class="btn btn-outline-accent">For Training Centers</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <h1 class="hero-title">Digital Skill Certificates <span>You Can Trust</span></h1>
+                    <p class="hero-subtitle">Secure, tamper-proof credentials for Nepali workers, instantly verifiable worldwide via blockchain technology.</p>
+                    <div class="hero-actions">
+                        <a href="#verification" class="btn btn-primary btn-lg">Verify a Certificate Now</a>
+                        <p class="hero-trust"><i data-feather="check-circle" style="width:18px;"></i> Trusted by 500+ training centers across Nepal</p>
+                    </div>
+                </div>
+                <!-- 3D Card Effect -->
+                <div class="hero-image-wrapper">
+                    <div class="hero-cert-card">
+                        <div class="hero-cert-card-inner">
+                            <header class="cert-header">
+                                <div class="cert-status"><i data-feather="shield"></i><span>Verified</span></div>
+                                <div class="cert-icon"><i data-feather="award"></i></div>
+                            </header>
+                            <div class="cert-body">
+                                <h3>Electrician Technician</h3>
+                                <p>CTEVT Certified Program</p>
+                                <div class="cert-placeholder"><i data-feather="maximize"></i></div>
+                                <span>ID: SKSL-2024-001234</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-secure-badge">100% Secure</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VERIFICATION SECTION (New Dark Theme) -->
+        <section id="verification" class="section dark-section">
+            <div class="container">
+                <div class="verify-content-wrapper">
+                    <!-- Left Side: Text -->
+                    <div class="verify-text">
+                        <h2 class="section-title text-white" style="text-align: left;">Instant Verification</h2>
+                        <p class="section-subtitle text-white-dim" style="text-align: left; margin: 0;">
+                            Validate the authenticity of any SkillSathi certificate in seconds. Employers worldwide trust our secure verification system to hire with confidence.
+                        </p>
+                        <ul class="verify-features">
+                            <li><i data-feather="check"></i> Tamper-proof technology</li>
+                            <li><i data-feather="check"></i> Instant QR code scanning</li>
+                            <li><i data-feather="check"></i> Global recognition</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Right Side: Card -->
+                    <div class="card verification-card">
+                        <h3 style="margin-bottom: 1.5rem; text-align: center; color: var(--dark-color);">Check Validity</h3>
+                        <form class="form" id="verificationForm">
+                            <div class="form-group">
+                                <label for="certIdInput" class="form-label">Certificate ID / SHA Code</label>
+                                <input type="text" id="certIdInput" class="form-control" placeholder="e.g. SKSL-2024-XXXXXX">
+                            </div>
+                            
+                            <div class="divider">OR</div>
+                            
+                            <button type="button" id="scanQrBtn" class="btn btn-outline btn-full">
+                                <i data-feather="camera"></i> Scan QR Code
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-full" style="margin-top: 10px;">
+                                Verify Now
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS SECTION -->
+        <section id="how-it-works" class="section bg-light">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">A simple three-step process for secure digital credentialing.</p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-user"><i data-feather="user-check"></i></div>
+                        <h3 class="feature-title">1. Issue</h3>
+                        <p class="feature-text">Training centers issue secure digital certificates to skilled workers instantly.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon icon-lock"><i data-feather="lock"></i></div>
+                        <h3 class="feature-title">2. Secure</h3>
+                        <p class="feature-text">Certificates are cryptographically hashed and stored securely on the ledger.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon icon-search"><i data-feather="search"></i></div>
+                        <h3 class="feature-title">3. Verify</h3>
+                        <p class="feature-text">Employers scan the QR code to instantly verify authenticity and details.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section id="about" class="section">
+            <div class="container content-grid">
+                <div class="content-text">
+                    <h2 class="content-title">Crafted for Confidence.</h2>
+                    <p class="content-subtitle">At SkillSathi, our platform is our promise: crafted with care for a trustworthy experience. We're building a future where every skill is recognized and every opportunity is unlocked through verifiable credentials.</p>
+                </div>
+                <div class="content-image">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071" alt="Team working">
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section id="faqs" class="section bg-light">
+            <div class="container faq-container">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p class="section-subtitle">Have a question? We've got answers.</p>
+                <div class="faq-list">
+                    <details class="faq-item">
+                        <summary class="faq-question">What is SkillSathi? <i data-feather="chevron-down"></i></summary>
+                        <p class="faq-answer">SkillSathi is a digital platform for issuing and verifying skill certificates. We partner with accredited training centers in Nepal.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">How do I verify a certificate? <i data-feather="chevron-down"></i></summary>
+                        <p class="faq-answer">Use the Verification section above to enter the ID or scan the QR code found on the certificate.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">Is it secure? <i data-feather="chevron-down"></i></summary>
+                        <p class="faq-answer">Yes. Each certificate is backed by a unique digital signature, making it tamper-proof.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+       <!-- CONTACT SECTION -->
+<section id="contact" class="section">
+    <div class="container contact-container">
+        <h2 class="section-title">Get In Touch</h2>
+        <p class="section-subtitle">Partner with us to standardize skill certification.</p>
+        <div class="contact-card">
+            <div class="contact-info">
+                <h3>Contact Information</h3>
+                <p style="margin-bottom: 2rem; opacity: 0.8;"></p>
+                <div class="info-group">
+                    <div class="info-item"><i data-feather="map-pin"></i> <span>Bode, Bhaktapur</span></div>
+                    <div class="info-item"><i data-feather="mail"></i> <span>skillsathi.info@gmail.com</span></div>
+                    <div class="info-item"><i data-feather="phone"></i> <span>+977-9823045928</span></div>
+                </div>
+                <div class="contact-socials">
+                    
+                </div>
+            </div>
+            <form class="contact-form form" id="contactForm"> <!-- ADDED ID -->
+                <div id="contact-alert" style="margin-bottom: 10px;"></div>
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="name" id="contactName" class="form-control" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" id="contactEmail" class="form-control" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea name="message" id="contactMessage" class="form-control" placeholder="How can we help?" required></textarea>
+                </div>
+                <button type="submit" id="sendContactBtn" class="btn btn-primary btn-full">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <a href="/" class="logo" style="margin-bottom: 1rem; display: inline-block;">
+                        <div class="logo-icon"><i data-feather="award"></i></div>
+                        <span class="logo-text" style="color: white;">SkillSathi</span>
+                    </a>
+                    <p>Empowering Nepali workers with trusted digital credentials.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Platform</h4>
+                    <ul class="footer-links">
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="login.html?action=register">Register Center</a></li>
+                        <li><a href="#verification">Verify Cert</a></li>
+                    </ul>
+                   
+                </div>
+                <div class="footer-column">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <ul class="footer-links">
+                        <li>Bhaktapur, Nepal</li>
+                        <li>skillsathi.info@gmail.com</li>
+                        <li>+977-9823045928</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 SkillSathi. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- QR SCAN MODAL -->
+    <div id="qrScanModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <header class="modal-header">
+                <h2>Scan QR Code</h2>
+                <button id="closeScanModal" class="modal-close-btn">&times;</button>
+            </header>
+            <div class="modal-body">
+                <div id="scanSelectionView">
+                    <button id="startCameraBtn" class="btn btn-primary btn-full" style="margin-bottom: 1rem; display: flex; justify-content: center; gap: 10px;">
+                        <i data-feather="camera"></i> Use Camera
+                    </button>
+                    <div class="divider">OR</div>
+                    <label for="qrInputFile" class="btn btn-outline btn-full" style="cursor: pointer; display: flex; justify-content: center; gap: 10px;">
+                        <i data-feather="image"></i> Upload Image
+                    </label>
+                    <input type="file" id="qrInputFile" accept="image/*" style="display: none;">
+                </div>
+                <div id="cameraView" style="display: none;">
+                    <div id="reader" style="width: 100%; border-radius: 8px; overflow: hidden;"></div>
+                    <p id="scanStatus" style="margin-top: 10px; color: #666;">Initializing...</p>
+                    <button id="stopCameraBtn" class="btn btn-outline btn-sm" style="margin-top: 10px;">Stop Camera</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/contact.js"></script> 
+    <script>feather.replace()</script>
+</body>
+</html>

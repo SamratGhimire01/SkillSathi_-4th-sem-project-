@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Super Admin - SkillSathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/dashboard-modern.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Ensure Chart.js is here -->
+    <style>
+        .dashboard-section { display: none; }
+        .dashboard-section.active { display: block; }
+        .sidebar-link { cursor: pointer; }
+        .stat-icon-wrapper { background: white !important; border: 1px solid #E5E7EB; color: var(--brand-blue); }
+        .stat-analytics-info p { font-size: 0.95rem; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i data-feather="shield"></i></div>
+            <span class="logo-text">Admin Panel</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="sidebar-link active" data-target="section-overview"><i data-feather="grid"></i> Dashboard Overview</a>
+            <a class="sidebar-link" data-target="section-companies"><i data-feather="briefcase"></i> Training Centers</a>
+            <a class="sidebar-link" data-target="section-support"><i data-feather="message-square"></i> Support Tickets</a>
+            <a class="sidebar-link" data-target="section-logs"><i data-feather="activity"></i> System Logs</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a id="logoutButton" class="sidebar-link logout"><i data-feather="log-out"></i> Logout</a>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <p>System Control</p>
+                <h1>Admin Analytics</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userInitial">A</div>
+                    <span style="font-weight:700; font-size:0.9rem;" id="userName">Super Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            
+            <!-- SECTION 1: DASHBOARD OVERVIEW -->
+            <div id="section-overview" class="dashboard-section active">
+                
+                <div class="stats-grid">
+                    <!-- ... (Stats cards remain the same) ... -->
+                    <div class="stat-analytics-card"><div class="stat-analytics-info"><p>Total Centers</p><h4 id="totalCenters">0</h4></div><div class="stat-icon-wrapper" style="color:var(--brand-green);"><i data-feather="briefcase"></i></div></div>
+                    <div class="stat-analytics-card"><div class="stat-analytics-info"><p>Total Certificates</p><h4 id="totalCerts">0</h4></div><div class="stat-icon-wrapper" style="color:var(--brand-blue);"><i data-feather="file-text"></i></div></div>
+                    <div class="stat-analytics-card"><div class="stat-analytics-info"><p>Pending Reviews</p><h4 id="pendingApprovals">0</h4></div><div class="stat-icon-wrapper" style="color:var(--warning);"><i data-feather="clock"></i></div></div>
+                    <div class="stat-analytics-card"><div class="stat-analytics-info"><p>Total Workers</p><h4 id="totalWorkers">0</h4></div><div class="stat-icon-wrapper" style="color:var(--text-dark);"><i data-feather="users"></i></div></div>
+                </div>
+
+                <!-- CHARTS SECTION -->
+                <div class="dashboard-grid" style="margin-top:20px;">
+                    <!-- LEFT: BAR CHART -->
+                    <div class="card">
+                        <h3>Monthly Issuance Trend</h3>
+                        <div style="height:300px;"><canvas id="issuanceBarChart"></canvas></div>
+                    </div>
+                    <!-- RIGHT: PIE CHART -->
+                    <div class="card">
+                        <h3>Center Status Distribution</h3>
+                        <div style="height:300px;"><canvas id="centerPieChart"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- ACTIVITY LOGS OVERVIEW -->
+                <div class="card" style="margin-top:20px;">
+                    <h3>Recent System Activity</h3>
+                    <div class="table-container" style="max-height:350px; overflow-y:auto;">
+                        <table class="data-table">
+                            <thead><tr><th>Time</th><th>Action</th><th>Actor ID</th><th>Details</th></tr></thead>
+                            <tbody id="logsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SECTION 2: COMPANIES LIST -->
+            <div id="section-companies" class="dashboard-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Registered Training Centers</h2>
+                        <div class="filter-container">
+                             <select id="companyFilterStatus" class="filter-select">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="verified">Verified</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <input type="text" id="companySearchInput" class="search-box" placeholder="Search name, email...">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Status</th><th>Joined</th><th>Action</th></tr></thead>
+                            <tbody id="companiesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: SUPPORT TICKETS -->
+            <div id="section-support" class="dashboard-section">
+                <div class="card">
+                    <div class="card-header"><h2>Support Requests</h2></div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead><tr><th>Date</th><th>Company</th><th>Subject</th><th>Message</th><th>Status</th><th>Action</th></tr></thead>
+                            <tbody id="supportTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- In admin_dashboard.html -->
+<!-- SECTION 4: SYSTEM LOGS -->
+<div id="section-logs" class="dashboard-section">
+    <div class="card">
+        <div class="card-header">
+            <h2>Full System Logs</h2>
+            <div class="filter-container">
+                <select id="logFilterType" class="filter-select">
+                    <option value="all">All Events</option>
+                    <option value="login">Logins</option>
+                    <option value="issue_certificate">Certificates Issued</option>
+                    <option value="delete">Deleted Items</option>
+                    <option value="approve">Approvals</option>
+                </select>
+                <input type="text" id="logSearchInput" class="search-box" placeholder="Search actor or details...">
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="data-table">
+                <thead><tr><th>Time</th><th>Action</th><th>Actor ID</th><th>Details</th></tr></thead>
+                <tbody id="logsTableBodyFull"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+        </main>
+    </div>
+    
+    <!-- MODAL FOR COMPANY REVIEW / DETAILS -->
+    <div id="companyDetailModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 900px;">
+            <header class="modal-header">
+                <h2 id="detailCompanyName">Company Name</h2>
+                <button onclick="document.getElementById('companyDetailModal').style.display='none'" class="modal-close-btn">&times;</button>
+            </header>
+            <div class="modal-body">
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:20px;">
+                    <!-- LEFT SIDE: STATS & DETAILS -->
+                    <div>
+                        <h3>Overview</h3>
+                        <div class="stats-grid" style="margin-bottom:20px;">
+                            <div class="stat-analytics-card" style="height:100%;">
+                                <div class="stat-analytics-info">
+                                    <p>Workers</p>
+                                    <h4 id="detailWorkers">0</h4>
+                                </div>
+                                <div class="stat-icon-wrapper" style="color:var(--text-dark);"><i data-feather="users"></i></div>
+                            </div>
+                            <div class="stat-analytics-card" style="height:100%;">
+                                <div class="stat-analytics-info">
+                                    <p>Total Certs</p>
+                                    <h4 id="detailCertsTotal">0</h4>
+                                </div>
+                                <div class="stat-icon-wrapper" style="color:var(--brand-blue);"><i data-feather="file-text"></i></div>
+                            </div>
+                            <div class="stat-analytics-card" style="height:100%;">
+                                <div class="stat-analytics-info">
+                                    <p>Active Certs</p>
+                                    <h4 id="detailCertsActive">0</h4>
+                                </div>
+                                <div class="stat-icon-wrapper" style="color:var(--brand-green);"><i data-feather="check-circle"></i></div>
+                            </div>
+                        </div>
+
+                        <h3>Application Details</h3>
+                        <p><strong>Status:</strong> <span id="detailStatus" class="status-pill status-active"></span></p>
+                        <p><strong>Email:</strong> <span id="detailEmail"></span></p>
+                        <p><strong>Reg No:</strong> <span id="detailRegNo"></span></p>
+                        <p><strong>Contact:</strong> <span id="detailContactName"></span></p>
+                        <p><strong>Citizenship:</strong> <span id="detailCitizen"></span></p>
+
+                        <div style="margin-top:20px; display:flex; gap:10px;">
+                            <button id="btnDetailApprove" class="btn-primary" style="background-color: var(--brand-green);">✅ Approve Center</button>
+                            <button id="btnDetailReject" class="btn-primary" style="background-color: var(--warning);">⚠️ Reject Center</button>
+                            <button id="btnDetailDelete" class="btn-primary" style="background-color: var(--danger);">❌ Delete Center</button>
+                        </div>
+                    </div>
+                    <!-- RIGHT SIDE: DOCUMENTS -->
+                    <div>
+                        <h3>Documents</h3>
+                        <label style="font-weight:600; font-size:0.9rem; color:#333;">Contact Photo</label>
+                        <img id="detailImgPhoto" src="" style="width:100%; height:150px; object-fit:contain; border:1px solid #ddd; margin-bottom:10px; border-radius:10px;">
+                        
+                        <label style="font-weight:600; font-size:0.9rem; color:#333;">Registration Doc</label>
+                        <iframe id="detailDocFrame" src="" style="width:100%; height:200px; border:1px solid #ddd; border-radius:10px;"></iframe>
+                        <a id="detailDocLink" href="#" target="_blank" style="display:block; font-size:0.8rem; color:var(--brand-blue); margin-top:5px;">Open Fullscreen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>feather.replace()</script>
+    <script src="js/admin_dashboard.js"></script>
+</body>
+</html>
