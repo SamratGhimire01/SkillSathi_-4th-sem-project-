@@ -1,0 +1,317 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ██████   PREMIUM-UX CSS - ENTERPRISE MICRO-INTERACTIONS   ██████
+   ═══════════════════════════════════════════════════════════════════════════
+   FILE: premium-ux.css
+   PURPOSE: Premium hover effects, glassmorphism, and advanced UI polish
+   DEPENDENCIES: Requires base.css for color tokens
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* === ── GLASSMORPHISM COMPONENTS ── === */
+
+/**
+ * █■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■█
+ * FUNCTION NAME: glassmorphism effect
+ * SECURITY/UX OBJECTIVE: Creates premium translucent surfaces that maintain
+ *    readability while adding depth perception
+ * CORE INPUTS: N/A
+ * ARCHITECTURAL ROLE: Visual layering for modals, dropdowns, and floating panels
+ * █■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■█
+ */
+.glass {
+    background: rgba(13, 11, 18, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(34, 31, 51, 0.5);
+}
+
+.glass-card {
+    background: rgba(20, 18, 26, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-base);
+}
+
+.glass-card:hover {
+    background: rgba(26, 24, 34, 0.9);
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+}
+
+/* === ── GLOW EFFECTS ── === */
+
+.glow-on-hover {
+    transition: all var(--transition-base);
+}
+
+.glow-on-hover:hover {
+    box-shadow: 0 0 20px var(--accent-primary-glow);
+    border-color: var(--accent-primary);
+}
+
+.glow-text {
+    text-shadow: 0 0 8px rgba(124, 58, 237, 0.5);
+}
+
+/* === ── RIPPLE EFFECT (Buttons) ── === */
+
+/**
+ * █■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■█
+ * FUNCTION NAME: ripple effect
+ * SECURITY/UX OBJECTIVE: Provides tactile feedback on button clicks
+ *    confirming user interaction audibly/visually
+ * CORE INPUTS: N/A - CSS pseudo-element driven
+ * ARCHITECTURAL ROLE: Enhances perceived responsiveness of UI actions
+ * █■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■█
+ */
+.btn-ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.4s, height 0.4s;
+}
+
+.btn-ripple:active::after {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+}
+
+/* === ── LOADING SKELETON (Content Placeholder) ── === */
+
+/**
+ * █■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■█
+ * FUNCTION NAME: skeleton loading animation
+ * SECURITY/UX OBJECTIVE: Reduces perceived latency during async operations
+ * CORE INPUTS: N/A
+ * ARCHITECTURAL ROLE: Visual placeholder while FastAPI fetches certificate data
+ * █■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■█
+ */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, 
+        var(--bg-tertiary) 25%, 
+        var(--surface-hover) 50%, 
+        var(--bg-tertiary) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+}
+
+.skeleton-text {
+    height: 1em;
+    margin-bottom: var(--space-sm);
+}
+
+.skeleton-title {
+    height: 1.5em;
+    width: 60%;
+    margin-bottom: var(--space-md);
+}
+
+.skeleton-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+/* === ── HOVER LIFT EFFECTS ── === */
+
+.hover-lift {
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.hover-scale {
+    transition: transform var(--transition-base);
+}
+
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+
+/* === ── FOCUS RINGS (Accessibility) ── === */
+
+/**
+ * █■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■█
+ * FUNCTION NAME: focus ring indicator
+ * SECURITY/UX OBJECTIVE: WCAG compliant keyboard navigation focus indicators
+ * CORE INPUTS: N/A
+ * ARCHITECTURAL ROLE: Accessibility requirement for enterprise compliance
+ * █■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■█
+ */
+:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* Remove default outline but keep custom */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* === ── SCROLL REVEAL ANIMATIONS ── === */
+
+@keyframes revealUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+.reveal-on-scroll.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* === ── CUSTOM CURSOR (Premium Touch) ── === */
+
+.premium-cursor {
+    cursor: none;
+}
+
+.premium-cursor .custom-cursor {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--accent-primary);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s;
+}
+
+/* === ── NEOMORPHIC ELEMENTS ── === */
+
+.neumorph {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3),
+                -5px -5px 10px rgba(255, 255, 255, 0.02);
+}
+
+.neumorph-inset {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3),
+                inset -3px -3px 6px rgba(255, 255, 255, 0.02);
+}
+
+/* === ── GRADIENT BORDERS ── === */
+
+.gradient-border {
+    position: relative;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+}
+
+.gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(135deg, var(--accent-primary), #A855F7);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.gradient-border:hover::before {
+    opacity: 1;
+}
+
+/* === ── STATUS INDICATORS (Certificate States) ── === */
+
+.status-active {
+    background: var(--success-bg);
+    color: var(--success-text);
+    border: 1px solid var(--success-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-xs);
+    font-weight: 600;
+}
+
+.status-revoked {
+    background: var(--error-bg);
+    color: var(--error-text);
+    border: 1px solid var(--error-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-xs);
+    font-weight: 600;
+}
+
+.status-pending {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-xs);
+    font-weight: 600;
+}
+
+/* === ── TOOLTIP PREMIUM ── === */
+
+.tooltip-premium {
+    position: relative;
+}
+
+.tooltip-premium::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-xs);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--transition-base);
+    border: 1px solid var(--border-subtle);
+    z-index: var(--z-tooltip);
+}
+
+.tooltip-premium:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-12px);
+}

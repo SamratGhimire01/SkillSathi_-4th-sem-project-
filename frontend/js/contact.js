@@ -1,4 +1,4 @@
-// frontend/js/contact.js (FINAL DEBUGGED VERSION)
+// frontend/js/contact.js (FINAL DEBUGGED VERSION - COOKIE-COMPATIBLE)
 
 document.addEventListener('DOMContentLoaded', () => {
     // Sticking to Localhost as requested for presentation stability
@@ -24,11 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            // Send request to the API
+            // Send request to the API with cookie support (consistent with auth architecture)
             const response = await fetch(`${API_BASE_URL}/public/contact`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials: 'include'  // Include cookies for consistent session handling
             });
 
             // If the server connection works, attempt to read result

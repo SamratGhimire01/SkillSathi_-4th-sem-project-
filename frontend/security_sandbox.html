@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSathi | IEEE Research & Hardening Sandbox</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg-base: #0B0A0F;
+            --bg-surface: #12111A;
+            --bg-card: #1A1826;
+            --accent-purple: #7C3AED;
+            --accent-glow: rgba(124, 58, 237, 0.2);
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --border-color: #262438;
+            --status-success: #10B981;
+            --status-error: #EF4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'DM Sans', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-primary); padding: 40px 20px; }
+        .container { max-width: 1300px; margin: 0 auto; }
+        
+        header { margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 24px; }
+        h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, #FFF 0%, #A78BFA 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.subtitle { color: var(--text-secondary); font-size: 0.95rem; margin-top: 6px; }
+
+        .auth-bar { background: linear-gradient(90deg, var(--bg-surface) 0%, #171524 100%); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px 24px; margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+        .auth-title { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; color: #A78BFA; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .auth-inputs { display: flex; gap: 12px; align-items: center; }
+        .auth-input { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 14px; color: #FFF; font-size: 0.85rem; width: 220px; }
+        
+        .btn-auth { background: transparent; color: #FFF; border: 1px solid var(--accent-purple); padding: 10px 18px; font-weight: 500; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease; }
+        .btn-auth:hover { background: var(--accent-purple); box-shadow: 0 0 12px var(--accent-glow); }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media(max-width: 1024px) { .grid { grid-template-columns: 1fr; } }
+
+        .card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; margin-bottom: 25px; }
+        .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: #FFF; }
+        .card-title i { color: var(--accent-purple); width: 20px; }
+
+        .btn-run { background: var(--bg-base); color: #A78BFA; border: 1px solid var(--border-color); padding: 10px 16px; font-weight: 500; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; font-size: 0.85rem; }
+        .btn-run:hover { background: var(--accent-purple); color: #FFF; border-color: var(--accent-purple); box-shadow: 0 0 15px var(--accent-glow); }
+
+        .terminal-box { background: #07060A; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; font-family: 'Courier New', Courier, monospace; color: #A78BFA; min-height: 180px; max-height: 250px; overflow-y: auto; font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; }
+
+        .experiment-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
+        .experiment-row:last-child { border-bottom: none; }
+        .exp-info h4 { font-size: 0.9rem; font-weight: 500; color: #FFF; }
+        .exp-info p { font-size: 0.8rem; color: var(--text-secondary); }
+
+        .inspector-search-bar { display: flex; gap: 12px; margin-bottom: 20px; }
+        .inspector-input { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 16px; color: #FFF; font-size: 0.9rem; flex: 1; font-family: monospace; }
+
+        .inspect-table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 0.85rem; }
+        .inspect-table th { text-align: left; padding: 8px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); font-weight: 500; }
+        .inspect-table td { padding: 10px 8px; border-bottom: 1px solid var(--border-color); color: #FFF; }
+
+        .json-block { background: #07060A; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; font-family: monospace; color: #34D399; font-size: 0.82rem; overflow-x: auto; max-height: 250px; white-space: pre; }
+        .qr-flex-container { display: flex; gap: 20px; align-items: center; background: var(--bg-base); padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); }
+        #qrCanvas { background: white; padding: 6px; border-radius: 6px; display: inline-block; }
+        .url-text-display { font-family: monospace; font-size: 0.78rem; color: #A78BFA; word-break: break-all; max-height: 100px; overflow-y: auto; }
+
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; border: 1px solid; display: inline-block; }
+        .badge.success { background: rgba(16, 185, 129, 0.1); color: var(--status-success); border-color: rgba(16, 185, 129, 0.2); }
+        .badge.danger { background: rgba(239, 68, 68, 0.1); color: var(--status-error); border-color: rgba(239, 68, 68, 0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>SkillSathi Platform Hardening Verification Suite</h1>
+        <p class="subtitle">IEEE Explorer Core Compliance Evaluation Framework // Authorized Review Context Mode</p>
+    </header>
+
+    <div class="auth-bar">
+        <div class="auth-title"><i data-feather="key"></i> Session Status: <span id="sessionStatus" style="color:var(--status-error); margin-left:5px;">Unauthorized</span></div>
+        <form class="auth-inputs" id="sandboxLoginForm" onsubmit="executeSandboxLogin(event)">
+            <input type="email" id="authEmail" class="auth-input" placeholder="Admin Email" required value="kaman@gmail.com">
+            <input type="password" id="authPassword" class="auth-input" placeholder="Security Password" required value="Samrat@2003">
+            <button type="submit" class="btn-auth">Establish Session Context</button>
+        </form>
+    </div>
+
+    <div class="grid">
+        <section>
+            <div class="card">
+                <div class="card-title"><i data-feather="terminal"></i> Dynamic Academic Verification Panel</div>
+                <div class="experiment-row"><div class="exp-info"><h4>1. Asymmetric Cryptographic Overhead Iterations</h4><p>Executes loops of Ed25519 signing / validation engines.</p></div><button class="btn-run" onclick="triggerExperiment('crypto')"><i data-feather="play"></i> Run</button></div>
+                <div class="experiment-row"><div class="exp-info"><h4>2. State Transition Revocation Mechanics</h4><p>Validates instant state invalidation updates.</p></div><button class="btn-run" onclick="triggerExperiment('revocation')"><i data-feather="play"></i> Run</button></div>
+                <div class="experiment-row"><div class="exp-info"><h4>3. Structural Tampering Protection Loop</h4><p>Fires explicitly corrupted public verification tokens.</p></div><button class="btn-run" onclick="triggerExperiment('tampering')"><i data-feather="play"></i> Run</button></div>
+                <div class="experiment-row"><div class="exp-info"><h4>4. Baseline Production Latency Profile</h4><p>Samples mean, median, and 95th percentile metrics.</p></div><button class="btn-run" onclick="triggerExperiment('baseline')"><i data-feather="play"></i> Run</button></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i data-feather="shield"></i> Multi-Tenant Load Testing Suite (Locust)</div>
+                <div class="experiment-row">
+                    <div class="exp-info"><h4>Launch Public Rate-Limiting Defense Test</h4><p>Floods a single asset index to prove the 30 req/min rule actively blocks and throttles the client IP.</p></div>
+                    <button class="btn-run" onclick="triggerLocustEngine()" style="border-color: #F59E0B; color: #F59E0B;"><i data-feather="shield"></i> Launch Mitigated Test</button>
+                </div>
+                <div id="locustPortalDrawer" style="display: none; margin-top: 15px; background: var(--bg-base); padding: 12px; border-radius: 8px; border: 1px dashed var(--accent-purple); align-items: center; justify-content: space-between;">
+                    <span style="font-size: 0.82rem; color: #FFF;">🚀 Background Locust Worker Live:</span>
+                    <a id="locustTargetUrl" href="#" target="_blank" class="btn-run" style="background: var(--accent-purple); color:#FFF; border:none; text-decoration:none; font-size:0.8rem;">Open Interface <i data-feather="external-link"></i></a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i data-feather="activity"></i> Active Terminal Ingestion Streams</div>
+                <div class="terminal-box" id="consoleLog">> Waiting for session validation authentication token initialization...</div>
+            </div>
+        </section>
+
+        <section>
+            <div class="card">
+                <div class="card-title"><i data-feather="zoom-in"></i> Live Cryptographic Credential Inspector</div>
+                <div class="inspector-search-bar">
+                    <input type="text" id="targetUid" class="inspector-input" placeholder="Input Target Certificate UID (e.g., SKSL-61D27091)">
+                    <button class="btn-run" style="background: var(--accent-purple); color:#FFF; border:none;" onclick="inspectCredential()"><i data-feather="search"></i> Inspect Envelope</button>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size:0.8rem; font-weight:700; color:#A78BFA; margin-bottom:4px;">[TABLE] ISSUER VERIFICATION DIRECTORY</div>
+                    <table class="inspect-table">
+                        <thead><tr><th>Issuer Property</th><th>Registry Value</th></tr></thead>
+                        <tbody>
+                            <tr><td>Decentralized Identifier (DID)</td><td id="resDid" style="font-family:monospace; color:#A78BFA;">-</td></tr>
+                            <tr><td>Authority Name</td><td id="resIssuerName">-</td></tr>
+                            <tr><td>Crypto Verification Keys</td><td id="resPublicKey" style="font-family:monospace; font-size:0.75rem; color:var(--text-secondary);">-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size:0.8rem; font-weight:700; color:#A78BFA; margin-bottom:4px;">[TABLE] REVOCATION REGISTRY STATE ENGINE</div>
+                    <table class="inspect-table">
+                        <thead><tr><th>Lifecycle Trait</th><th>State Condition Metrics</th></tr></thead>
+                        <tbody>
+                            <tr><td>Registry Status</td><td><span id="resStatusBadge" class="badge neutral">Idle</span></td></tr>
+                            <tr><td>Flagged Timestamp</td><td id="resRevokedTime" style="color:var(--text-secondary);">-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size:0.8rem; font-weight:700; color:#A78BFA; margin-bottom:6px;">[QR] SIGNED CRYPTOGRAPHIC URL CODE</div>
+                    <div class="qr-flex-container">
+                        <div id="qrCanvas"></div>
+                        <div class="url-text-display" id="resUrlDisplay">-</div>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="font-size:0.8rem; font-weight:700; color:#A78BFA; margin-bottom:4px;">[JSON] W3C VERIFIABLE CREDENTIAL COMPLIANCE ENVELOONE</div>
+                    <div class="json-block" id="resJsonView">{ "awaiting": "payload_ingestion" }</div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    feather.replace();
+    const API_BASE = "http://localhost:8000";
+    let activeSessionToken = ""; 
+    let qrEngineInstance = new QRCode(document.getElementById("qrCanvas"), { width: 110, height: 110 });
+
+    async function executeSandboxLogin(event) {
+        event.preventDefault();
+        const email = document.getElementById("authEmail").value;
+        const password = document.getElementById("authPassword").value;
+        const consoleEl = document.getElementById("consoleLog");
+        try {
+            const formData = new URLSearchParams();
+            formData.append("username", email); formData.append("password", password);
+            const res = await fetch(`${API_BASE}/auth/login`, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: formData });
+            if(!res.ok) throw new Error("Invalid credentials.");
+            const data = await res.json();
+            activeSessionToken = data.access_token;
+            document.getElementById("sessionStatus").textContent = "Authorized (Context Live)";
+            document.getElementById("sessionStatus").style.color = "var(--status-success)";
+            consoleEl.textContent = `[SUCCESS] Authentication Context Established. Secure token mapping synchronized.\n`;
+        } catch (error) { consoleEl.textContent = `[AUTHENTICATION CRITICAL FAILURE] ${error.message}\n`; }
+    }
+
+    async function triggerExperiment(testType) {
+        const consoleEl = document.getElementById("consoleLog");
+        consoleEl.textContent += `\n[SYSTEM] Deploying thread payload block for: ${testType.toUpperCase()}...\n`;
+        if (!activeSessionToken) { consoleEl.textContent += `[REJECTION] Please login to establish admin context session first.\n`; return; }
+        try {
+            const response = await fetch(`${API_BASE}/admin/sandbox/test/${testType}`, { method: 'POST', headers: { 'Authorization': `Bearer ${activeSessionToken}` } });
+            const data = await response.json(); consoleEl.textContent += `[METRIC SNAPSHOT RECEIVED]\n${data.output}`;
+        } catch (error) { consoleEl.textContent += `[REJECTION VECTOR TRIGGERED] ${error.message}\n`; }
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    async function triggerLocustEngine() {
+        const consoleEl = document.getElementById("consoleLog");
+        consoleEl.textContent += `\n[SYSTEM] Deploying background process for targeted rate-limiting evaluation test...\n`;
+        if (!activeSessionToken) { consoleEl.textContent += `[REJECTION] Authenticate context session first.\n`; return; }
+        try {
+            const response = await fetch(`${API_BASE}/admin/sandbox/locust/launch`, { method: 'POST', headers: { 'Authorization': `Bearer ${activeSessionToken}` } });
+            const data = await response.json();
+            consoleEl.textContent += `[SUCCESS] Background rate-limiting worker script running.\n`;
+            document.getElementById("locustTargetUrl").href = data.locust_url;
+            document.getElementById("locustPortalDrawer").style.display = "flex";
+        } catch (error) { consoleEl.textContent += `[LOAD MATRIX ERROR] ${error.message}\n`; }
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    async function inspectCredential() {
+        const uid = document.getElementById("targetUid").value.trim();
+        if(!uid) { alert("Please input a valid Certificate UID."); return; }
+        try {
+            const res = await fetch(`${API_BASE}/verification/${uid}`);
+            if(!res.ok) throw new Error("Certificate record not found.");
+            const data = await res.json();
+
+            document.getElementById("resDid").textContent = data.issuer_did;
+            document.getElementById("resIssuerName").textContent = data.issuer_name;
+            document.getElementById("resPublicKey").textContent = data.issuer_public_key ? "Ed25519 Key: " + data.issuer_public_key.substring(0, 24) + "..." : "Active Asymmetric Key";
+
+            const badge = document.getElementById("resStatusBadge");
+            if(data.is_valid && data.status === "active") {
+                badge.textContent = "Secured // Active"; badge.className = "badge success";
+                document.getElementById("resRevokedTime").textContent = "N/A (Active State)";
+            } else {
+                badge.textContent = `Invalid // ${data.status.toUpperCase()}`; badge.className = "badge danger";
+                document.getElementById("resRevokedTime").textContent = data.revoked_at ? data.revoked_at : "Registry Flagged Vector";
+            }
+
+            const signedUrl = data.vc_json?.skillsathi?.verificationURL || `${API_BASE}/verification/${data.certificate_uid}`;
+            document.getElementById("resUrlDisplay").textContent = signedUrl;
+            qrEngineInstance.clear(); qrEngineInstance.makeCode(signedUrl);
+
+            const academicW3CRepresentation = {
+                "@context": ["https://www.w3.org/2018/credentials/v1", "https://skillsathi.org/contexts/v1"],
+                "id": `urn:uuid:${data.certificate_uid}`,
+                "type": ["VerifiableCredential", "SkillCertificate"],
+                "issuer": { "id": data.issuer_did, "name": data.issuer_name, "verificationLevel": data.issuer_verification_level },
+                "issuanceDate": data.issue_date,
+                "credentialSubject": { "id": data.issuer_did, "recipientName": data.recipient_name, "courseTitle": data.course_title, "courseDuration": data.course_duration, "completionDate": data.completion_date, "verificationLookupsCount": data.verification_count },
+                "trustInfrastructureAudit": { "merkle_root_anchor": data.merkle_root || "Awaiting Next Batch Rollup", "anchor_date_timestamp": data.anchor_date || "Pending Daily Commit", "proof_path_siblings": data.proof_path || [] },
+                "proof": { "type": "Ed25519Signature2020", "verificationMethod": `${data.issuer_did}#key-1`, "proofPurpose": "assertionMethod", "proofValue": "vrK6dzIP..." }
+            };
+            document.getElementById("resJsonView").textContent = JSON.stringify(academicW3CRepresentation, null, 2);
+        } catch (error) { alert(error.message); }
+    }
+</script>
+</body>
+</html>

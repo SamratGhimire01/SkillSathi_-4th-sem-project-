@@ -18,12 +18,6 @@
     <div class="form-container sign-in-container">
         <form id="staffLoginForm">
             <h1 style="color: #3A86FF;">Staff Portal</h1>
-            
-            <div class="social-container">
-                <a href="#" class="fb"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="gl"><i class="fab fa-google"></i></a>
-                <a href="#" class="li"><i class="fab fa-linkedin-in"></i></a>
-            </div>
             <span>access your workspace</span>
             
             <div id="alert-message" style="color:red; font-size:0.9rem; margin-bottom:10px; display:none;"></div>
@@ -76,7 +70,7 @@
         }
     }
 
-    // 2. Login Logic
+    // 2. Hardened Login Logic
     const API_BASE_URL = "http://127.0.0.1:8000";
     const form = document.getElementById('staffLoginForm');
     const alertBox = document.getElementById('alert-message');
@@ -94,7 +88,8 @@
         try {
             const response = await fetch(`${API_BASE_URL}/auth/worker/login`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'include' // Enforces browser capture and transmission of HttpOnly token cookie
             });
 
             const data = await response.json();
@@ -103,7 +98,16 @@
                 throw new Error(data.detail || 'Login failed');
             }
 
-            localStorage.setItem('accessToken', data.access_token);
+            // Extract non-sensitive staff name safely from temporary payload for dashboard rendering metrics
+            try {
+                const payload = JSON.parse(atob(data.access_token.split('.')[1]));
+                localStorage.setItem('worker_name', payload.name || "Staff Member");
+            } catch (jwtError) {
+                localStorage.setItem('worker_name', "Staff Member");
+            }
+
+            // Establish safe visual state tracking flags instead of exposing raw tokens to DOM extraction vectors
+            localStorage.setItem('is_logged_in', 'true');
             window.location.href = 'worker_dashboard.html';
 
         } catch (error) {
@@ -115,4 +119,5 @@
     });
 </script>
 
-</body
+</body>
+</html>

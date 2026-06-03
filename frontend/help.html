@@ -7,6 +7,161 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/dashboard-modern.css">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        .help-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+        }
+        
+        .help-hero h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .help-hero p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .faq-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .faq-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .faq-question {
+            padding: 18px 20px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #1e293b;
+            font-size: 1rem;
+        }
+        
+        .faq-question i {
+            transition: transform 0.3s ease;
+            color: #667eea;
+        }
+        
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 0 20px 18px 20px;
+            max-height: 200px;
+        }
+        
+        .contact-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .contact-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: #eff6ff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3b82f6;
+        }
+        
+        .ticket-status {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f0fdf4;
+            border-radius: 12px;
+            border-left: 4px solid #10b981;
+        }
+        
+        .toast-success {
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast-error {
+            background: #ef4444;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
 
@@ -21,12 +176,13 @@
             <a href="certificates.html" class="sidebar-link"><i data-feather="file-text"></i> Certificates</a>
             <a href="audit_logs.html" class="sidebar-link"><i data-feather="activity"></i> Audit Log</a>
             <a href="settings.html" class="sidebar-link"><i data-feather="settings"></i> Settings</a>
-            <!-- NEW LINK -->
             <a href="help.html" class="sidebar-link active"><i data-feather="help-circle"></i> Help & Support</a>
         </nav>
-        <div class="sidebar-footer"><a href="#" class="sidebar-link logout" onclick="confirmLogout(event)">
-    <i data-feather="log-out"></i> Logout
-</a></div>
+        <div class="sidebar-footer">
+            <a href="#" class="sidebar-link logout" onclick="confirmLogout(event)">
+                <i data-feather="log-out"></i> Logout
+            </a>
+        </div>
     </aside>
 
     <div class="main-wrapper">
@@ -36,6 +192,21 @@
                 <h1>How can we help?</h1>
             </div>
             <div class="header-right">
+                <div style="position:relative; margin-right:16px;">
+                    <button id="notifBell" onclick="toggleNotifPanel()" style="background:none; border:none; cursor:pointer; position:relative; padding:8px;">
+                        <i data-feather="bell" style="color:#2B3674; width:22px; height:22px;"></i>
+                        <span id="notifBadge" style="display:none; position:absolute; top:4px; right:4px; background:#EF4444; color:white; border-radius:50%; width:18px; height:18px; font-size:0.7rem; font-weight:700; align-items:center; justify-content:center;">0</span>
+                    </button>
+                    <div id="notifPanel" style="display:none; position:absolute; right:0; top:50px; width:360px; background:white; border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,0.15); z-index:999; overflow:hidden;">
+                        <div style="padding:16px 20px; border-bottom:1px solid #F3F4F6; display:flex; justify-content:space-between; align-items:center;">
+                            <h3 style="font-size:1rem; color:#2B3674; margin:0;">Notifications</h3>
+                            <button onclick="markAllRead()" style="background:none; border:none; color:#3B82F6; cursor:pointer; font-size:0.85rem;">Mark all read</button>
+                        </div>
+                        <div id="notifList" style="max-height:400px; overflow-y:auto; padding:8px 0;">
+                            <p style="text-align:center; color:#9CA3AF; padding:20px;">Loading...</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="user-profile">
                     <div class="user-avatar" id="userInitial">U</div>
                     <span style="font-weight:700; font-size:0.9rem;" id="userName">Loading...</span>
@@ -43,10 +214,18 @@
             </div>
         </header>
 
+        <div class="help-hero">
+            <i data-feather="message-circle" style="width: 48px; height: 48px; margin-bottom: 16px;"></i>
+            <h1>We're here to help!</h1>
+            <p>Find answers to common questions or contact our support team</p>
+        </div>
+
         <div class="dashboard-grid">
-            <!-- Left: FAQs -->
             <div class="card">
-                <h3 style="margin-bottom:20px;">Frequently Asked Questions</h3>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                    <i data-feather="help-circle" style="color: #667eea; width: 28px; height: 28px;"></i>
+                    <h3 style="margin: 0;">Frequently Asked Questions</h3>
+                </div>
                 
                 <div class="faq-item">
                     <div class="faq-question">How do I issue a certificate? <i data-feather="chevron-down"></i></div>
@@ -64,88 +243,306 @@
                     <div class="faq-question">Is the data secure? <i data-feather="chevron-down"></i></div>
                     <div class="faq-answer">Yes, we use industry-standard encryption and secure hashing for all certificates.</div>
                 </div>
+                <div class="faq-item">
+                    <div class="faq-question">How to verify a certificate? <i data-feather="chevron-down"></i></div>
+                    <div class="faq-answer">Anyone can verify a certificate by scanning the QR code or visiting the verification page.</div>
+                </div>
             </div>
 
-            <!-- Right: Contact Form -->
-            <div class="card">
-                <h3 style="margin-bottom:20px;">Contact Support</h3>
-                <form>
-                    <div class="form-group">
-                        <label class="form-label">Subject</label>
-                        <select class="form-control">
-                            <option>Technical Issue</option>
-                            <option>Billing Question</option>
-                            <option>Feature Request</option>
-                        </select>
+            <div>
+                <div class="card">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                        <i data-feather="mail" style="color: #667eea; width: 28px; height: 28px;"></i>
+                        <h3 style="margin: 0;">Contact Support</h3>
+                        
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Message</label>
-                        <textarea class="form-control" rows="5" placeholder="Describe your issue..."></textarea>
-                    </div>
-                    <button class="btn-primary" style="width:100%;">Send Message</button>
-                </form>
-                
-                <div style="margin-top:20px; padding-top:20px; border-top:1px solid #eee;">
-                    <p style="font-size:0.9rem; color:var(--text-gray); margin-bottom:5px;">Email us directly:</p>
-                    <a href="mailto:skillsathi.info@gmail.com" style="color:var(--brand-blue); font-weight:600;">skillsathi.info@gmail.com</a>
+                    
+                    <form id="supportForm">
+                        <div class="form-group">
+                            <label class="form-label">Subject *</label>
+                            <select id="ticketSubject" class="form-control" required>
+                                <option value="">Select a subject</option>
+                                <option value="Technical Issue">🔧 Technical Issue</option>
+                                <option value="Billing Question">💰 Billing Question</option>
+                                <option value="Feature Request">✨ Feature Request</option>
+                                <option value="Account Issue">👤 Account Issue</option>
+                                <option value="Certificate Problem">📜 Certificate Problem</option>
+                                <option value="Other">📝 Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Message *</label>
+                            <textarea id="ticketMessage" class="form-control" rows="5" placeholder="Please describe your issue in detail..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" style="width:100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i data-feather="send"></i> Send Message
+                        </button>
+                    </form>
                 </div>
+                
+                <div class="contact-card">
+                    <h4 style="margin-bottom: 16px; color: #1e293b;">📞 Other Ways to Reach Us</h4>
+                    <div class="contact-info-item">
+                        <div class="contact-icon"><i data-feather="mail"></i></div>
+                        <div>
+                            <p style="font-weight: 600; margin: 0;">Email Support</p>
+                            <a href="mailto:skillsathi.info@gmail.com" style="color: #3b82f6;">skillsathi.info@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-icon"><i data-feather="clock"></i></div>
+                        <div>
+                            <p style="font-weight: 600; margin: 0;">Response Time</p>
+                            <p style="margin: 0; font-size: 0.85rem;">Within 24-48 hours</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="ticketStatus" style="display: none;"></div>
             </div>
         </div>
     </div>
 
     <script>
         feather.replace();
+        
         const API_BASE_URL = "http://127.0.0.1:8000";
-        const token = localStorage.getItem('accessToken');
+        
+        // Cookie-compatible session check - PURGED token extraction
+        if (localStorage.getItem('is_logged_in') !== 'true') {
+            window.location.href = 'login.html';
+        }
 
-        if(!token) window.location.href='login.html';
-
-        // --- SUBMIT TICKET LOGIC ---
-        document.querySelector('button.btn-primary').addEventListener('click', async (e) => {
+        window.confirmLogout = function(e) {
             e.preventDefault();
-            const btn = e.target;
-            const subject = document.querySelector('select').value;
-            const message = document.querySelector('textarea').value;
+            if (confirm("Are you sure you want to log out?")) {
+                localStorage.removeItem('is_logged_in');
+                sessionStorage.removeItem('is_logged_in');
+                window.location.href = 'login.html';
+            }
+        };
 
-            if(!message) return alert("Please enter a message");
+        // Submit Ticket with Cookie Auth
+        const supportForm = document.getElementById('supportForm');
+        
+        supportForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const subject = document.getElementById('ticketSubject').value;
+            const message = document.getElementById('ticketMessage').value;
 
-            btn.textContent = "Sending..."; btn.disabled = true;
+            if (!subject) {
+                showToast('Please select a subject', 'error');
+                return;
+            }
+            
+            if (!message || message.trim() === '') {
+                showToast('Please enter a message', 'error');
+                return;
+            }
+
+            const submitBtn = supportForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Sending...';
+            submitBtn.disabled = true;
 
             try {
+                console.log('Submitting ticket:', { subject, message });
+                
+                // REFACTORED: Removed Authorization header, added credentials: 'include'
                 const res = await fetch(`${API_BASE_URL}/support/submit`, {
                     method: 'POST',
                     headers: { 
-                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json' 
                     },
-                    body: JSON.stringify({ subject, message })
+                    body: JSON.stringify({ subject, message }),
+                    credentials: 'include'
                 });
 
-                if(res.ok) {
-                    alert("Ticket Sent! Our team will review it.");
-                    document.querySelector('textarea').value = ""; // Clear form
+                console.log('Response status:', res.status);
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    console.log('Ticket submitted:', data);
+                    showToast('✅ Ticket sent successfully! Our team will review it.', 'success');
+                    
+                    document.getElementById('ticketSubject').value = '';
+                    document.getElementById('ticketMessage').value = '';
+                    
+                    const statusDiv = document.getElementById('ticketStatus');
+                    statusDiv.style.display = 'block';
+                    statusDiv.className = 'ticket-status';
+                    statusDiv.innerHTML = `
+                        <p><i data-feather="check-circle" style="width: 16px; height: 16px; margin-right: 8px;"></i> 
+                        Your support ticket has been submitted. We will respond within 24-48 hours.</p>
+                    `;
+                    feather.replace();
+                    
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 10000);
+                    
                 } else {
-                    alert("Failed to send.");
+                    const error = await res.json().catch(() => ({}));
+                    console.error('Ticket submission error:', error);
+                    showToast('❌ Failed to send: ' + (error.detail || 'Unknown error'), 'error');
                 }
-            } catch(e) { console.error(e); alert("Network Error"); }
+            } catch (err) {
+                console.error('Network error:', err);
+                showToast('❌ Network error. Please try again.', 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        function showToast(message, type = 'success') {
+            const existing = document.getElementById('help-toast');
+            if (existing) existing.remove();
             
-            btn.textContent = "Send Message"; btn.disabled = false;
-        });
+            const toast = document.createElement('div');
+            toast.id = 'help-toast';
+            toast.className = type === 'success' ? 'toast-success' : 'toast-error';
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
 
-        // Header Info
-        fetch(`${API_BASE_URL}/companies/me`, { headers: { 'Authorization': `Bearer ${token}` } })
-            .then(r => r.json())
-            .then(u => {
-                document.getElementById('userName').textContent = u.name;
-                document.getElementById('userInitial').textContent = u.name[0];
-            });
-
-        document.getElementById('logoutButton').onclick = () => { localStorage.clear(); window.location.href='login.html'; };
-        
-        // Accordion
+        // FAQ Accordion
         document.querySelectorAll('.faq-question').forEach(item => {
-            item.addEventListener('click', () => { item.parentElement.classList.toggle('active'); });
+            item.addEventListener('click', () => {
+                const parent = item.parentElement;
+                parent.classList.toggle('active');
+            });
         });
+
+        // Load User Info with Cookie Auth
+        async function loadUserInfo() {
+            try {
+                // REFACTORED: Removed Authorization header, added credentials: 'include'
+                const res = await fetch(`${API_BASE_URL}/companies/me`, { 
+                    credentials: 'include'
+                });
+                if (res.ok) {
+                    const user = await res.json();
+                    document.getElementById('userName').textContent = user.name;
+                    document.getElementById('userInitial').textContent = user.name.charAt(0).toUpperCase();
+                }
+            } catch (err) {
+                console.error('Failed to load user info:', err);
+            }
+        }
+
+        // Logout Button - Cookie compatible
+        document.getElementById('logoutButton').onclick = (e) => {
+            e.preventDefault();
+            localStorage.removeItem('is_logged_in');
+            sessionStorage.removeItem('is_logged_in');
+            window.location.href = 'login.html';
+        };
+
+        loadUserInfo();
+
+        // Notifications with Cookie Auth
+        async function loadNotifications() {
+            // No token check needed - cookie handles auth
+            try {
+                // REFACTORED: Removed Authorization header, added credentials: 'include'
+                const res = await fetch(`${API_BASE_URL}/notifications/`, {
+                    credentials: 'include'
+                });
+                if (!res.ok) return;
+                const notifs = await res.json();
+
+                const badge = document.getElementById('notifBadge');
+                const list = document.getElementById('notifList');
+                if (!badge || !list) return;
+
+                const unread = notifs.filter(n => !n.is_read).length;
+                if (unread > 0) {
+                    badge.textContent = unread > 9 ? '9+' : unread;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                if (notifs.length === 0) {
+                    list.innerHTML = '<p style="text-align:center; color:#9CA3AF; padding:20px;">No notifications yet.</p>';
+                    return;
+                }
+
+                const typeColors = {
+                    'cert_submitted': '#3B82F6',
+                    'cert_approved': '#10B981',
+                    'cert_rejected': '#EF4444',
+                    'cert_expiring': '#F59E0B',
+                    'issue_reported': '#8B5CF6',
+                    'issue_resolved': '#10B981',
+                    'ticket_response': '#10B981',
+                    'worker_created': '#3B82F6',
+                };
+
+                list.innerHTML = notifs.map(n => `
+                    <div onclick="readNotif(${n.id}, '${n.link || ''}')"
+                         style="padding:12px 20px; cursor:pointer; border-bottom:1px solid #F9FAFB;
+                                background:${n.is_read ? 'white' : '#EFF6FF'};">
+                        <div style="display:flex; gap:12px; align-items:flex-start;">
+                            <div style="width:8px; height:8px; border-radius:50%; margin-top:6px;
+                                        background:${typeColors[n.type] || '#6B7280'};"></div>
+                            <div>
+                                <p style="font-weight:600; margin:0;">${n.title}</p>
+                                <p style="font-size:0.82rem; color:#6B7280; margin:4px 0 0;">${n.message}</p>
+                                <span style="font-size:0.75rem; color:#9CA3AF;">${new Date(n.created_at).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        window.toggleNotifPanel = function() {
+            const panel = document.getElementById('notifPanel');
+            if (!panel) return;
+            const isOpen = panel.style.display !== 'none';
+            panel.style.display = isOpen ? 'none' : 'block';
+            if (!isOpen) loadNotifications();
+        };
+
+        window.markAllRead = async function() {
+            // REFACTORED: Removed Authorization header, added credentials: 'include'
+            await fetch(`${API_BASE_URL}/notifications/mark-all-read`, {
+                method: 'PUT',
+                credentials: 'include'
+            });
+            loadNotifications();
+        };
+
+        window.readNotif = async function(id, link) {
+            // REFACTORED: Removed Authorization header, added credentials: 'include'
+            await fetch(`${API_BASE_URL}/notifications/${id}/read`, {
+                method: 'PUT',
+                credentials: 'include'
+            });
+            if (link) window.location.href = link;
+            else loadNotifications();
+        };
+
+        document.addEventListener('click', (e) => {
+            const panel = document.getElementById('notifPanel');
+            const bell = document.getElementById('notifBell');
+            if (panel && bell && !panel.contains(e.target) && !bell.contains(e.target)) {
+                panel.style.display = 'none';
+            }
+        });
+
+        loadNotifications();
+        setInterval(loadNotifications, 60000);
     </script>
+    <script src="js/app.js"></script>
 </body>
 </html>

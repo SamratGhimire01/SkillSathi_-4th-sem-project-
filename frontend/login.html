@@ -16,24 +16,16 @@
         <form id="registerForm" enctype="multipart/form-data">
             <h1 style="color: #3A86FF;">Create Account</h1>
             
-            <!-- <div class="social-container">
-                <a href="#" class="fb"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="gl"><i class="fab fa-google"></i></a>
-                <a href="#" class="li"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-            <span>use your official email for registration</span> -->
-            
-            <div id="reg-alert" style="color:red; font-size:0.9rem; display:none; margin-top:10px;"></div>
+            <div id="reg-alert" style="color:white; background:#EF4444; padding:10px; border-radius:8px; font-size:0.85rem; display:none; margin-top:10px; width:100%;"></div>
 
             <div class="section-title">Company Details</div>
-            <input type="text" name="name" placeholder="Company Name" required />
-            <input type="text" name="business_reg_number" placeholder="Business Reg. Number" required />
-            <!-- NEW PHONE NUMBER INPUT -->
-            <input type="tel" name="phone_number" placeholder="Phone Number (e.g. +977...)" required />
+            <input type="text" name="name" id="regCompanyName" placeholder="Company Name" required />
+            <input type="text" name="business_reg_number" id="regBusNo" placeholder="Business Reg. Number (Numbers only)" required />
+            <input type="tel" name="phone_number" id="regPhone" placeholder="Phone (e.g. 98...)" required />
             
             <div class="section-title">Contact Person</div>
-            <input type="text" name="primary_contact_name" placeholder="Full Name" required />
-            <input type="text" name="citizenship_number" placeholder="Citizenship ID" required />
+            <input type="text" name="primary_contact_name" id="regContactName" placeholder="Full Name (Letters only)" required />
+            <input type="text" name="citizenship_number" id="regCitNo" placeholder="Citizenship ID (Numbers only)" required />
 
             <div class="section-title">Documents</div>
             
@@ -66,14 +58,7 @@
         <form id="loginForm">
             <h1 style="color: #10B981;">Sign in to SkillSathi</h1>
             
-            <!-- <div class="social-container">
-                <a href="#" class="fb"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="gl"><i class="fab fa-google"></i></a>
-                <a href="#" class="li"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-            <span>or use your email account</span> -->
-            
-            <div id="login-alert" style="color:red; font-size:0.9rem; margin-bottom:10px; display:none;"></div>
+            <div id="login-alert" style="color:white; background:#EF4444; padding:10px; border-radius:8px; font-size:0.85rem; margin-bottom:10px; display:none; width:100%;"></div>
 
             <input type="email" name="username" placeholder="Email" required />
             
@@ -115,7 +100,7 @@
 </div>
 
 <script>
-    // Toggle Password
+    // --- HELPER FUNCTIONS ---
     function togglePass(inputId, icon) {
         const input = document.getElementById(inputId);
         if (input.type === "password") {
@@ -129,15 +114,6 @@
         }
     }
 
-    // Sliding Logic
-    const signUpButton = document.getElementById('signUp');
-    const signInButton = document.getElementById('signIn');
-    const container = document.getElementById('container');
-
-    signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
-    signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
-
-    // File Name Update
     function updateFileName(input, spanId) {
         const span = document.getElementById(spanId);
         if (input.files.length > 0) {
@@ -148,14 +124,21 @@
         }
     }
 
-    // API Handling
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.getElementById('container');
+
+    signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
+    signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
+
     const API_BASE_URL = "http://127.0.0.1:8000";
 
+    // --- LOGIN HANDLER ---
+    // --- LOGIN HANDLER (HARDENED FOR COOKIE AUTH) ---
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button');
         const alertBox = document.getElementById('login-alert');
-        const oldText = btn.innerText;
         btn.innerText = "Processing..."; btn.disabled = true;
         
         const formData = new FormData();
@@ -163,29 +146,83 @@
         formData.append('password', e.target.password.value);
 
         try {
-            const res = await fetch(`${API_BASE_URL}/auth/login`, { method: 'POST', body: formData });
+            // Added credentials: 'include' so the backend cookie can be stored by the browser
+            const res = await fetch(`${API_BASE_URL}/auth/login`, { 
+                method: 'POST', 
+                body: formData,
+                credentials: 'include'
+            });
             const data = await res.json();
+            
             if(res.ok) {
-                localStorage.setItem('accessToken', data.access_token);
-                const userRes = await fetch(`${API_BASE_URL}/companies/me`, { headers: {'Authorization': `Bearer ${data.access_token}`} });
+                // SECURITY REFACTOR: Removed raw localStorage token allocation. 
+                // Removed manual Auth header; using secure cookie mapping instead.
+                const userRes = await fetch(`${API_BASE_URL}/companies/me`, { 
+                    method: 'GET',
+                    credentials: 'include' 
+                });
                 const user = await userRes.json();
+                
+                // Safe dummy layout flag so your dashboard guard check script knows you're logged in
+                localStorage.setItem('is_logged_in', 'true');
+                
                 window.location.href = user.is_admin ? 'admin_dashboard.html' : 'dashboard.html';
             } else {
                 throw new Error(data.detail || "Login Failed");
             }
         } catch(err) {
             alertBox.style.display = 'block'; alertBox.innerText = err.message;
-            btn.innerText = oldText; btn.disabled = false;
+            btn.innerText = "Sign In"; btn.disabled = false;
         }
     });
 
+    // --- REGISTER HANDLER (With Validation) ---
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button');
         const alertBox = document.getElementById('reg-alert');
-        const oldText = btn.innerText;
-        btn.innerText = "Uploading..."; btn.disabled = true;
+        alertBox.style.display = 'none';
 
+        // 1. Data Retrieval
+        const phone = document.getElementById('regPhone').value.trim();
+        const busNo = document.getElementById('regBusNo').value.trim();
+        const contactName = document.getElementById('regContactName').value.trim();
+        const citizenNo = document.getElementById('regCitNo').value.trim();
+
+        // 2. VALIDATION LOGIC
+        
+        // A. Phone Validation: 98|97|96 followed by 8 digits
+        const phoneRegex = /^(98|97|96)\d{8}$/;
+        if (!phoneRegex.test(phone)) {
+            alertBox.innerText = "Invalid Phone! Must start with 98, 97, or 96 and be 10 digits.";
+            alertBox.style.display = 'block';
+            return;
+        }
+
+        // B. Numbers only for Business Registration
+        if (isNaN(busNo)) {
+            alertBox.innerText = "Business Registration must be numbers only.";
+            alertBox.style.display = 'block';
+            return;
+        }
+
+        // C. Letters only for Contact Person Name
+        const nameRegex = /^[a-zA-Z\s]+$/;
+        if (!nameRegex.test(contactName)) {
+            alertBox.innerText = "Contact Person Name must contain letters only.";
+            alertBox.style.display = 'block';
+            return;
+        }
+
+        // D. Numbers only for Citizenship
+        if (isNaN(citizenNo)) {
+            alertBox.innerText = "Citizenship ID must be numbers only.";
+            alertBox.style.display = 'block';
+            return;
+        }
+
+        // 3. API SUBMISSION
+        btn.innerText = "Uploading..."; btn.disabled = true;
         try {
             const formData = new FormData(e.target);
             const res = await fetch(`${API_BASE_URL}/auth/register`, { method: 'POST', body: formData });
@@ -202,23 +239,17 @@
         } catch(err) {
             alertBox.style.display = 'block'; alertBox.innerText = err.message;
         } finally {
-            btn.innerText = oldText; btn.disabled = false;
-        }
-        
-    }
-    
-    
-    );
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('action') === 'register') {
-            const container = document.getElementById('container');
-            container.classList.add("right-panel-active");
+            btn.innerText = "Sign Up"; btn.disabled = false;
         }
     });
 
-
+    // Handle URL parameters for direct navigation
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('action') === 'register') {
+            document.getElementById('container').classList.add("right-panel-active");
+        }
+    });
 </script>
 
 </body>
